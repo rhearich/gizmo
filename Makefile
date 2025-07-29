@@ -133,7 +133,22 @@ OPT     += -DUSE_MPI_IN_PLACE
 ##
 endif
 
-
+ifeq ($(SYSTYPE),"CARC")
+CC       =  mpicc
+CXX      =  mpic++
+FC       =  mpifort
+OPTIMIZE = -O2 # enable intermediate gcc optimization flags
+OPTIMIZE +=  -g -Wall  # display debug and warnings
+OPTIMIZE += -fopenmp # using OpenMP
+GSL_INCL = -I$(GSL_ROOT)/include # GSL include (CARC uses <MODULE>_ROOT as a shortcut to module install location)
+GSL_LIBS = -L$(GSL_ROOT)/lib # GSL libraries
+FFTW_INCL= -I$(FFTW_ROOT)/include # FFTW include location
+FFTW_LIBS= -L$(FFTW_ROOT)/lib # FFTW library location
+HDF5INCL = -I$(HDF5_ROOT)/include -DH5_USE_16_API # HDF5 include: the flag is for compatibility with calling conventions of an older version of HDF5 (for hdf5 1.8 or 1.10)
+HDF5LIB  = -L$(HDF5_ROOT)/lib -lhdf5 -lz # HDF5 library: again the flags are for compatibility
+MPICHLIB = -lmpich
+OPT     += -DUSE_MPI_IN_PLACE # additional compiler flags, which can be enabled here (with OPT+=X) or in the Config.sh file. Here the most recent Stampede mpi libraries require this flag to work properly with certain non-standard memory passing.
+endif
 
 ifeq ($(SYSTYPE),"Stampede2")
 CC       =  mpicc
